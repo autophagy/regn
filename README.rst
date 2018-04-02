@@ -1,8 +1,7 @@
-====
-Regn
-====
+.. image:: seonu/_static/github_header.png
+    :align: center
 
-A weather station, built with Arduino. Reads in temperature humidity,
+Regn is a weather station, built with Arduino. It reads in temperature humidity,
 atmospheric pressure and luminosity.
 
 Hardware
