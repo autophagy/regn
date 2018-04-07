@@ -18,6 +18,9 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_TSL2561_U.h>
 #include <Adafruit_BMP085_U.h>
+#include <ESP8266HTTPClient.h>
+#include <ESP8266WiFi.h>
+#include <ArduinoJson.h>
 
 // Constants
 #define DHTPIN 12 // DHT22 connected to pin 12
@@ -25,6 +28,12 @@
 DHT dht(DHTPIN, DHTTYPE);
 Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_LOW, 12345);
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
+
+// Connectivity
+const char* ssid = "ssid";
+const char* password = "password";
+const char* host = "host";
+const char* endpoint = "/api";
 
 
 // Variables
@@ -46,6 +55,29 @@ void setup() {
   tsl.enableAutoRange(true);
   tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_13MS);
   bmp.begin();
+
+  if (DEBUG) {
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
+  }
+
+  WiFi.begin(ssid, password);
+
+  if (DEBUG) {
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+    }
+
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+    Serial.print("Netmask: ");
+    Serial.println(WiFi.subnetMask());
+    Serial.print("Gateway: ");
+    Serial.println(WiFi.gatewayIP());
+  }
 }
 
 void loop() {
@@ -58,10 +90,36 @@ void loop() {
     outputDebugInfo();
   }
 
+  // POST sensor readings to endpoint
+  StaticJsonBuffer<300> JSONbuffer;
+  JsonObject& JSONencoder = JSONbuffer.createObject();
+  JSONencoder["temperature"] = temperature;
+  JSONencoder["humidity"] = humidity;
+  JSONencoder["pressure"] = pressure;
+  JSONencoder["lux"] = lux;
+  char JSONmessageBuffer[300];
+  JSONencoder.prettyPrintTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
+
+  if (DEBUG) {
+    Serial.println("JSON Data:");
+    Serial.println(JSONmessageBuffer);
+  }
+
+  HTTPClient http;
+  http.begin(host, endpoint);
+  http.addHeader("Content-Type", "application/json");
+  int code = http.POST(JSONmessageBuffer);
+
+  if (DEBUG) {
+    Serial.println(code);
+    Serial.println(http.getString());
+  }
+
+  http.end();
+
   // Delay by sensor_interval for each read
   delay(sensor_interval);
 }
-
 
 // Returns the temperature reading from the DHT22 sensor
 float getTemperature() {
@@ -108,5 +166,4 @@ void outputDebugInfo() {
   Serial.println(" lux");
 
   Serial.println("------------------------------------");
-
 }
