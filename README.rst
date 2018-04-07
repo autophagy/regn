@@ -15,9 +15,9 @@ Hardware
 Schematics
 ----------
 
-.. image:: circuit_design/fritzing/weather-station_bb.png
+.. image:: station/weather-station_bb.png
 
-.. image:: circuit_design/fritzing/weather-station_schem.png
+.. image:: station/weather-station_schem.png
 
 Software
 ========
