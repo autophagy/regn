@@ -1,5 +1,7 @@
-from flask import Flask, make_response, request, jsonify, abort
+from flask import Flask, make_response, request, jsonify, abort, json
 from datetime import datetime
+from schema import validate_schema
+from schema.sensor_insert import insert_sensor_schema
 
 application = Flask(__name__)
 
@@ -17,10 +19,11 @@ def index():
 
 
 @application.route("/api/insert", methods=["POST"])
+@validate_schema(insert_sensor_schema)
 def insert():
     data = json.loads(request.data)
     print(data)
-    return 201
+    return "", 201
 
 
 # Sensor Data Retrieval
