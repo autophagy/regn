@@ -1,12 +1,11 @@
 from flask import Flask, request, jsonify, abort, json
-from datetime import datetime
+from datetime import datetime, timedelta
+from calendar import timegm
 from .schema import validate_schema
 from .schema.sensor_insert import insert_sensor_schema
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 
-VALID_DURATIONS = ["day", "week", "month", "year"]
-VALID_SENSOR_TYPES = ["temperature", "humidity", "pressure", "luminosity"]
 
 application = Flask(__name__)
 application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/test.db"
@@ -23,16 +22,29 @@ class SensorData(db.Model):
 
     def dict(self):
         return {
-            "timestamp": self.timestamp,
+            "timestamp": timegm(self.timestamp.utctimetuple()) * 1000,
             "temperature": self.temperature,
             "humidity": self.humidity,
             "pressure": self.pressure,
-            "luminosity": self.luminosity,
+            "luminosity": self.luminosity
         }
 
 
 db.create_all()
 db.session.commit()
+
+VALID_DURATIONS = {
+    "day": timedelta(days=1),
+    "week": timedelta(weeks=1),
+    "month": timedelta(days=30),
+    "year": timedelta(days=365),
+}
+VALID_SENSOR_TYPES = {
+    "temperature": SensorData.temperature,
+    "humidity": SensorData.humidity,
+    "pressure": SensorData.pressure,
+    "luminosity": SensorData.luminosity,
+}
 
 
 @application.route("/")
@@ -79,18 +91,22 @@ def latest():
 def sensorReadings(sensor, duration):
     if sensor not in VALID_SENSOR_TYPES or duration not in VALID_DURATIONS:
         abort(404)
-    return "{} for duration: {}".format(sensor, duration)
+    now = datetime.utcnow()
+    values = db.session.query(getattr(SensorData, sensor)).filter(
+        SensorData.timestamp >= now - VALID_DURATIONS[duration]
+    ).all()
+    return jsonify(values)
 
 
 @application.route("/api/<string:sensor>/<string:duration>/<int:ts>", methods=["GET"])
 def sensorReadingsSinceTimestamp(sensor, duration, ts):
     if sensor not in VALID_SENSOR_TYPES or duration not in VALID_DURATIONS:
         abort(404)
-
-    dt = datetime.fromtimestamp(ts / 1000)
-    return "{} for duration {} since timestamp: {}".format(
-        sensor, duration, dt.strftime("%Y.%m.%d // %H.%M.%S")
-    )
+    dt = datetime.utcfromtimestamp(ts / 1000)
+    values = db.session.query(getattr(SensorData, sensor)).filter(
+        SensorData.timestamp > dt
+    ).all()
+    return jsonify(values)
 
 
 if __name__ == "__main__":
