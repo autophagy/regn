@@ -92,9 +92,15 @@ def sensorReadings(sensor, duration):
     if sensor not in VALID_SENSOR_TYPES or duration not in VALID_DURATIONS:
         abort(404)
     now = datetime.utcnow()
-    values = db.session.query(getattr(SensorData, sensor)).filter(
+    values = db.session.query(getattr(SensorData, sensor), SensorData.timestamp).filter(
         SensorData.timestamp >= now - VALID_DURATIONS[duration]
     ).all()
+    values = list(
+        map(
+            lambda x: {"timestamp": timegm(x[1].utctimetuple()) * 1000, "value": x[0]},
+            values,
+        )
+    )
     return jsonify(values)
 
 
@@ -103,9 +109,15 @@ def sensorReadingsSinceTimestamp(sensor, duration, ts):
     if sensor not in VALID_SENSOR_TYPES or duration not in VALID_DURATIONS:
         abort(404)
     dt = datetime.utcfromtimestamp(ts / 1000)
-    values = db.session.query(getattr(SensorData, sensor)).filter(
+    values = db.session.query(getattr(SensorData, sensor), SensorData.timestamp).filter(
         SensorData.timestamp > dt
     ).all()
+    values = list(
+        map(
+            lambda x: {"timestamp": timegm(x[1].utctimetuple()) * 1000, "value": x[0]},
+            values,
+        )
+    )
     return jsonify(values)
 
 
