@@ -96,7 +96,7 @@ void loop() {
   JSONencoder["temperature"] = temperature;
   JSONencoder["humidity"] = humidity;
   JSONencoder["pressure"] = pressure;
-  JSONencoder["lux"] = lux;
+  JSONencoder["luminosity"] = lux;
   char JSONmessageBuffer[300];
   JSONencoder.prettyPrintTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
 
