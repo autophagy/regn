@@ -114,6 +114,40 @@ class Dashboard {
         latest_request.send();
     }
 
+    refresh_graph() {
+        var latest_graph = new XMLHttpRequest();
+        latest_graph.open('GET', ['/api', this.mode.apiTerm, this.granularity.apiTerm, this.lastUpdated].join('/'), true)
+        var self = this
+        latest_graph.onload = function() {
+            if (latest_graph.status >= 200 && latest_graph.status < 400) {
+                self.lastUpdated = new Date().getTime();
+                var dat = JSON.parse(latest_graph.responseText);
+                if (dat.length > 0) {
+                    var data = self.graph.config.data.datasets[0].data
+                    for (var i = 0; i < dat.length; i++) {
+                        data.push({"x": new Date(dat[i]["timestamp"]), "y": dat[i]["value"]});
+                    }
+                    var scatterChartData = {
+                        datasets: [{
+                            data: data,
+                            borderColor: '#e6e6e6',
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            pointHoverRadius: 0,
+                            lineTension: 0.5,
+                            fill: false,
+                            showLine: true
+                        }],
+                        labels: []
+                    };
+                    self.graph.config.data = scatterChartData;
+                    self.graph.update();
+                }
+            }
+        }
+        latest_graph.send();
+    }
+
     create_new_graph(data) {
         var scatterChartData = {
             datasets: [{
@@ -134,6 +168,7 @@ class Dashboard {
         var chartOptions = {
             data: scatterChartData,
             options: {
+                responsive: true,
                 animation: false,
                 legend: {
                     display: false
@@ -151,7 +186,6 @@ class Dashboard {
                                 'second': 'HH.MM.ss',
                                 'minute': 'HH.MM'
                             },
-                            stepSize: 10
                         },
                         distribution: 'series',
                         gridLines: {
@@ -213,4 +247,5 @@ var dashboard = new Dashboard();
 
 setInterval(function(){
     dashboard.refresh_latest();
+    dashboard.refresh_graph();
 }, 10000);
