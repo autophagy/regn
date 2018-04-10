@@ -50,7 +50,7 @@ COORDINATES = {"latitude": 52.489, "longitude": 13.354}
 
 @application.route("/")
 def index():
-    return render_template("index.html", coordinates=COORDINATES)
+    return render_template("index.html")
 
 
 # REST-ish Endpoints
@@ -81,8 +81,11 @@ def insert():
 
 @application.route("/api/latest", methods=["GET"])
 def latest():
+    latest_results = COORDINATES
     latest = db.session.query(SensorData).order_by(desc("timestamp")).first()
-    return jsonify(latest.dict())
+    if (latest is not None):
+        latest_results.update(latest.dict())
+    return jsonify(latest_results)
 
 
 # Specific Sensor Types

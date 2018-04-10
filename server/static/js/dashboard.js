@@ -3,32 +3,57 @@ class Dashboard {
         this.defaultSensorType = 'temperature'
         this.defaultGranularity = 'day'
 
-        this.sensorTypes = Object.freeze({
+        this.latestReadingTypes = Object.freeze({
+            'latitude': {
+                'apiTerm': 'latitude',
+                'title': 'Latitude',
+                'unit': '°',
+            },
+            'longitude': {
+                'apiTerm': 'longitude',
+                'title': 'Longitude',
+                'unit': '°',
+            },
             'temperature': {
                 'apiTerm': 'temperature',
                 'title': 'Temperature',
                 'unit': '°C',
-                'suggestedMin': -5,
-                'suggestedMax': 25,
             },
             'humidity': {
                 'apiTerm': 'humidity',
                 'title': 'Humidity',
                 'unit': '%',
-                'suggestedMin': 0,
-                'suggestedMax': 100,
             },
             'pressure': {
                 'apiTerm': 'pressure',
                 'title': 'Pressure',
                 'unit': ' hPa',
-                'suggestedMin': 900,
-                'suggestedMax': 1100,
             },
             'luminosity': {
                 'apiTerm': 'luminosity',
                 'title': 'Luminosity',
                 'unit': ' lux',
+            },
+        });
+
+        this.sensorTypes = Object.freeze({
+            'temperature': {
+                'apiTerm': 'temperature',
+                'suggestedMin': -5,
+                'suggestedMax': 25,
+            },
+            'humidity': {
+                'apiTerm': 'humidity',
+                'suggestedMin': 0,
+                'suggestedMax': 100,
+            },
+            'pressure': {
+                'apiTerm': 'pressure',
+                'suggestedMin': 900,
+                'suggestedMax': 1100,
+            },
+            'luminosity': {
+                'apiTerm': 'luminosity',
                 'suggestedMin': 0,
                 'suggestedMax': 1500,
             },
@@ -79,9 +104,10 @@ class Dashboard {
         latest_request.onload = function() {
             if (latest_request.status >= 200 && latest_request.status < 400) {
                 var dat = JSON.parse(latest_request.responseText);
-                for (var key in self.sensorTypes) {
-                    document.getElementById("latest-" + self.sensorTypes[key].apiTerm).innerHTML = dat[self.sensorTypes[key].apiTerm] + self.sensorTypes[key].unit
-                    document.getElementById("latest-" + self.sensorTypes[key].apiTerm + "-title").innerHTML = self.sensorTypes[key].title
+                for (var key in self.latestReadingTypes) {
+                    var readingType = self.latestReadingTypes[key]
+                    document.getElementById("latest-" + readingType.apiTerm).innerHTML = dat[readingType.apiTerm] + readingType.unit
+                    document.getElementById("latest-" + readingType.apiTerm + "-title").innerHTML = readingType.title
                 }
             }
         };
