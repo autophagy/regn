@@ -210,3 +210,7 @@ class Dashboard {
 }
 
 var dashboard = new Dashboard();
+
+setInterval(function(){
+    dashboard.refresh_latest();
+}, 10000);
