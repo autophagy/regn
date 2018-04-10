@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, abort, json
+from flask import Flask, request, jsonify, abort, json, render_template
 from datetime import datetime, timedelta
 from calendar import timegm
 from .schema import validate_schema
@@ -8,7 +8,7 @@ from sqlalchemy import desc
 
 
 application = Flask(__name__)
-application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/test.db"
+application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
 db = SQLAlchemy(application)
 
 
@@ -45,11 +45,12 @@ VALID_SENSOR_TYPES = {
     "pressure": SensorData.pressure,
     "luminosity": SensorData.luminosity,
 }
+COORDINATES = {"latitude": 52.489, "longitude": 13.354}
 
 
 @application.route("/")
 def index():
-    return "Hello!"
+    return render_template("index.html", coordinates=COORDINATES)
 
 
 # REST-ish Endpoints
@@ -122,4 +123,4 @@ def sensorReadingsSinceTimestamp(sensor, duration, ts):
 
 
 if __name__ == "__main__":
-    application.run(host="0.0.0.0")
+    application.run(host="0.0.0.0", port=80)

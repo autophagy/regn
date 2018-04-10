@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2D2D2D" />
+
+    <title>Regn</title>
+
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}" />
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <div id="sidebar">
+            <div id="latest-data">
+
+                <img src="{{url_for('static', filename='img/logo.png')}}" id="logo" />
+
+                <div class="latest-reading">
+                    <div class="detail">
+                        <div id="latitude" class="reading">
+                            {{ coordinates.latitude }}
+                        </div>
+                    </div>
+                    <div class="description">
+                        Latitude
+                    </div>
+                </div>
+
+                <div class="latest-reading">
+                    <div class="detail">
+                        <div id="longitude" class="reading">
+                            {{ coordinates.longitude }}
+                        </div>
+                    </div>
+                    <div class="description">
+                        Longitude
+                    </div>
+                </div>
+
+                <div class="latest-reading">
+                    <div class="detail">
+                        <div id="latest-temperature" class="reading">
+                        </div>
+                    </div>
+                    <div class="description">
+                        Temperature
+                    </div>
+                </div>
+
+                <div class="latest-reading">
+                    <div class="detail">
+                        <div id="latest-humidity" class="reading">
+                        </div>
+                    </div>
+                    <div class="description">
+                        Humidity
+                    </div>
+                </div>
+
+                <div class="latest-reading">
+                    <div class="detail">
+                        <div id="latest-pressure" class="reading">
+                        </div>
+                    </div>
+                    <div class="description">
+                        Pressure
+                    </div>
+                </div>
+
+                <div class="latest-reading">
+                    <div class="detail">
+                        <div id="latest-luminosity" class="reading">
+                        </div>
+                    </div>
+                    <div class="description">
+                        Luminosity
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="graph">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+
+    <script src="{{url_for('static', filename='js/dashboard.js')}}"></script>
+</body>
+
+</html>

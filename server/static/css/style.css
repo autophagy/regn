@@ -1,0 +1,33 @@
+body {
+    background-color: #1F1F1F;
+    color: #e6e6e6;
+    font-family: 'Inconsolata', monospace;
+    padding: 45px;
+}
+
+#container {
+    display: flex;
+    justify-content: space-between;
+}
+
+#sidebar {
+    min-width: 150px;
+    margin-right: 45px;
+}
+
+#latest-data .detail {
+    font-size: 30px;
+}
+
+#latest-data .description {
+    color: #999999;
+}
+
+.latest-reading {
+    margin-top: 22px;
+    margin-bottom: 22px;
+}
+
+#graph {
+    flex: 1;
+}
