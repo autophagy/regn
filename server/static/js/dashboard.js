@@ -53,14 +53,14 @@ class Dashboard {
             },
         });
 
-        this.lastUpdated = new Date().getTime();
         this.mode = this.sensorTypes[this.defaultSensorType];
         this.granularity = this.granularities[this.defaultGranularity];
         this.refresh_latest();
-        this.init_dashboard();
+        this.create_dashboard();
     }
 
-    init_dashboard() {
+    create_dashboard() {
+        this.lastUpdated = new Date().getTime();
         var graph_request = new XMLHttpRequest();
         graph_request.open('GET', '/api/' + this.mode.apiTerm + '/' + this.granularity.apiTerm, true);
         var self = this
@@ -168,13 +168,18 @@ class Dashboard {
             }
         };
 
-        if (this.graph == null) {
-            var ctx = document.getElementById("canvas").getContext("2d");
-            this.graph = Chart.Scatter(ctx, chartOptions);
-        } else {
-            this.graph.options = chartOptions;
-            this.graph.update();
-        }
+        var ctx = document.getElementById("canvas").getContext("2d");
+        this.graph = Chart.Scatter(ctx, chartOptions);
+    }
+
+    switch_mode(mode) {
+        this.mode = this.sensorTypes[mode];
+        this.create_dashboard();
+    }
+
+    switch_granularity(granularity) {
+        this.granularity = this.granularities[granularity];
+        this.create_dashboard();
     }
 }
 
