@@ -199,9 +199,13 @@ class Dashboard {
                             labelString: 'x axis'
                         },
                         ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 5,
                             fontColor: '#e6e6e6',
                             fontFamily: 'Inconsolata',
-                            padding: 20
+                            padding: 20,
+                            maxRotation: 0,
+                            minRotation: 0
                         }
                     }],
                     yAxes: [{
