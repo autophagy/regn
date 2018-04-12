@@ -157,9 +157,19 @@ class Dashboard {
     }
 
     create_new_graph(data) {
+        var reduced_data_points = Math.min(50, data.length);
+        var chunk_size = data.length / reduced_data_points
+        var reduced_data = [];
+        for (var i = 0; i < reduced_data_points; i++) {
+            var chunk = data.slice(i*chunk_size, (i+1)*chunk_size);
+            var s = chunk.reduce(function(x, y) { return {"timestamp": x.timestamp + y.timestamp,
+                                                          "value": x.value + y.value }});
+            reduced_data.push({"timestamp": s.timestamp / chunk.length,
+                               "value": s.value / chunk.length })
+        }
         var scatterChartData = {
             datasets: [{
-                data: data.map(x => ({
+                data: reduced_data.map(x => ({
                     "x": new Date(x["timestamp"]),
                     "y": x["value"]
                 })),
