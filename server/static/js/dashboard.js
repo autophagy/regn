@@ -63,18 +63,26 @@ class Dashboard {
             'day': {
                 'apiTerm': 'day',
                 'title': 'Day',
+                'dayDifference': 1,
+                'unit': 'hour',
             },
             'week': {
                 'apiTerm': 'week',
                 'title': 'Week',
+                'dayDifference': 7,
+                'unit': 'day',
             },
             'month': {
                 'apiTerm': 'month',
                 'title': 'Month',
+                'dayDifference': 30,
+                'unit': 'week',
             },
             'year': {
                 'apiTerm': 'year',
                 'title': 'Year',
+                'dayDifference': 365,
+                'unit': 'month',
             },
         });
 
@@ -181,10 +189,20 @@ class Dashboard {
                         position: 'bottom',
                         type: 'time',
                         time: {
+                            max: new Date(),
+                            min: moment().utc().subtract(this.granularity.dayDifference, 'days').toDate(),
+                            unit: this.granularity.unit,
                             displayFormats: {
                                 'millisecond': 'SSS [ms]',
                                 'second': 'HH.MM.ss',
-                                'minute': 'HH.MM'
+                                'minute': 'HH.MM',
+                                'hour': 'HH.MM',
+                                'week': 'MMM DDD',
+                                'day': 'MMM DD',
+                                'week': 'MMM DD',
+                                'month': 'MMM',
+                                'quarter': 'MMM',
+                                'year': 'MMM',
                             },
                         },
                         distribution: 'linear',
