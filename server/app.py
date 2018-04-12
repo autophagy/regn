@@ -4,7 +4,10 @@ from calendar import timegm
 from .schema import validate_schema
 from .schema.sensor_insert import insert_sensor_schema
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import desc
+from sqlalchemy import desc, asc
+from statistics import mean
+from functools import reduce
+from math import ceil
 
 
 application = Flask(__name__)
@@ -90,32 +93,45 @@ def latest():
 
 # Specific Sensor Types
 
-
 @application.route("/api/<string:sensor>/<string:duration>", methods=["GET"])
-def sensorReadings(sensor, duration):
+@application.route("/api/<string:sensor>/<string:duration>/<int:datapoints>", methods=["GET"])
+def sensorReadings(sensor, duration, datapoints=None):
     if sensor not in VALID_SENSOR_TYPES or duration not in VALID_DURATIONS:
         abort(404)
     now = datetime.utcnow()
     values = db.session.query(getattr(SensorData, sensor), SensorData.timestamp).filter(
         SensorData.timestamp >= now - VALID_DURATIONS[duration]
-    ).all()
+    ).order_by(asc("timestamp")).all()
+    # Average the result set by the amount of required datapoints
     values = list(
         map(
             lambda x: {"timestamp": timegm(x[1].utctimetuple()) * 1000, "value": x[0]},
             values,
         )
     )
+    reduced_data = []
+    if datapoints is not None:
+        reduced_points = min(datapoints, len(values))
+        chunk_size = ceil(len(values) / reduced_points)
+        reduced_data = []
+        for i in range(0, reduced_points):
+            chunk = values[i*chunk_size:(i+1)*chunk_size]
+            if len(chunk) > 0:
+                summed = reduce(lambda x, y: {"timestamp": x["timestamp"] + y["timestamp"],
+                                              "value": x["value"] + y["value"]}, chunk)
+                reduced_data.append({"timestamp": summed["timestamp"] / len(chunk),
+                                    "value": summed["value"] / len(chunk)})
+        values = reduced_data
     return jsonify(values)
 
-
-@application.route("/api/<string:sensor>/<string:duration>/<int:ts>", methods=["GET"])
+@application.route("/api/<string:sensor>/<string:duration>/since/<int:ts>", methods=["GET"])
 def sensorReadingsSinceTimestamp(sensor, duration, ts):
     if sensor not in VALID_SENSOR_TYPES or duration not in VALID_DURATIONS:
         abort(404)
     dt = datetime.utcfromtimestamp(ts / 1000)
     values = db.session.query(getattr(SensorData, sensor), SensorData.timestamp).filter(
         SensorData.timestamp > dt
-    ).all()
+    ).order_by(asc("timestamp")).all()
     values = list(
         map(
             lambda x: {"timestamp": timegm(x[1].utctimetuple()) * 1000, "value": x[0]},

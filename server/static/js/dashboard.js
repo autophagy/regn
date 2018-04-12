@@ -88,6 +88,7 @@ class Dashboard {
 
         this.mode = this.sensorTypes[this.defaultSensorType];
         this.granularity = this.granularities[this.defaultGranularity];
+        this.datapointDensity = 50;
         this.refresh_latest();
         this.create_dashboard();
     }
@@ -95,7 +96,7 @@ class Dashboard {
     create_dashboard() {
         this.lastUpdated = new Date().getTime();
         var graph_request = new XMLHttpRequest();
-        graph_request.open('GET', '/api/' + this.mode.apiTerm + '/' + this.granularity.apiTerm, true);
+        graph_request.open('GET', ['/api', this.mode.apiTerm, this.granularity.apiTerm, this.datapointDensity].join('/'), true);
         var self = this
         graph_request.onload = function() {
             if (graph_request.status >= 200 && graph_request.status < 400) {
@@ -124,7 +125,7 @@ class Dashboard {
 
     refresh_graph() {
         var latest_graph = new XMLHttpRequest();
-        latest_graph.open('GET', ['/api', this.mode.apiTerm, this.granularity.apiTerm, this.lastUpdated].join('/'), true)
+        latest_graph.open('GET', ['/api', this.mode.apiTerm, this.granularity.apiTerm, "since", this.lastUpdated].join('/'), true)
         var self = this
         latest_graph.onload = function() {
             if (latest_graph.status >= 200 && latest_graph.status < 400) {
@@ -157,19 +158,9 @@ class Dashboard {
     }
 
     create_new_graph(data) {
-        var reduced_data_points = Math.min(50, data.length);
-        var chunk_size = data.length / reduced_data_points
-        var reduced_data = [];
-        for (var i = 0; i < reduced_data_points; i++) {
-            var chunk = data.slice(i*chunk_size, (i+1)*chunk_size);
-            var s = chunk.reduce(function(x, y) { return {"timestamp": x.timestamp + y.timestamp,
-                                                          "value": x.value + y.value }});
-            reduced_data.push({"timestamp": s.timestamp / chunk.length,
-                               "value": s.value / chunk.length })
-        }
         var scatterChartData = {
             datasets: [{
-                data: reduced_data.map(x => ({
+                data: data.map(x => ({
                     "x": new Date(x["timestamp"]),
                     "y": x["value"]
                 })),
