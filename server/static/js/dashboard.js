@@ -187,7 +187,7 @@ class Dashboard {
                                 'minute': 'HH.MM'
                             },
                         },
-                        distribution: 'series',
+                        distribution: 'linear',
                         gridLines: {
                             color: '#e6e6e6',
                             drawOnChartArea: false,
