@@ -110,11 +110,10 @@ def sensorReadings(sensor, duration, datapoints=None):
         )
     )
     reduced_data = []
-    if datapoints is not None:
-        reduced_points = min(datapoints, len(values))
-        chunk_size = ceil(len(values) / reduced_points)
+    if datapoints is not None and datapoints < len(values):
+        chunk_size = ceil(len(values) / datapoints)
         reduced_data = []
-        for i in range(0, reduced_points):
+        for i in range(0, datapoints):
             chunk = values[i*chunk_size:(i+1)*chunk_size]
             if len(chunk) > 0:
                 summed = reduce(lambda x, y: {"timestamp": x["timestamp"] + y["timestamp"],
