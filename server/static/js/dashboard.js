@@ -39,21 +39,25 @@ class Dashboard {
         this.sensorTypes = Object.freeze({
             'temperature': {
                 'apiTerm': 'temperature',
+                'title': 'Temperature',
                 'suggestedMin': -5,
                 'suggestedMax': 25,
             },
             'humidity': {
                 'apiTerm': 'humidity',
+                'title': 'Humidity',
                 'suggestedMin': 0,
                 'suggestedMax': 100,
             },
             'pressure': {
                 'apiTerm': 'pressure',
+                'title': 'Pressure',
                 'suggestedMin': 900,
                 'suggestedMax': 1100,
             },
             'luminosity': {
                 'apiTerm': 'luminosity',
+                'title': 'Luminosity',
                 'suggestedMin': 0,
                 'suggestedMax': 1500,
             },
@@ -101,6 +105,7 @@ class Dashboard {
         graph_request.onload = function() {
             if (graph_request.status >= 200 && graph_request.status < 400) {
                 self.create_new_graph(JSON.parse(graph_request.responseText))
+                self.create_controls()
             }
         }
         graph_request.send();
@@ -253,6 +258,22 @@ class Dashboard {
 
         var ctx = document.getElementById("canvas").getContext("2d");
         this.graph = Chart.Scatter(ctx, chartOptions);
+    }
+
+    create_controls() {
+        for (var key in this.sensorTypes) {
+            var sensorType = this.sensorTypes[key]
+            var elm = document.getElementById(sensorType.apiTerm + "-control")
+            elm.innerHTML = sensorType.title;
+            elm.onclick = (function(apiTerm, self) {return function() {
+                self.switch_mode(apiTerm);
+            };})(sensorType.apiTerm, this);
+            if (this.mode == sensorType) {
+                elm.classList.add('selected');
+            } else {
+                elm.classList.remove('selected');
+            }
+        }
     }
 
     switch_mode(mode) {

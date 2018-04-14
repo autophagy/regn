@@ -21,6 +21,7 @@ body {
 
 #latest-data .description {
     color: #999999;
+    font-size: 15px;
 }
 
 .latest-reading {
@@ -28,6 +29,31 @@ body {
     margin-bottom: 22px;
 }
 
-#graph {
+#graph-container {
     flex: 1;
+}
+
+#graph-controls {
+    margin-top: 22px;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+button.control {
+    background-color: #1f1f1f; /* Green */
+    font-family: 'Inconsolata', monospace;
+    border: none;
+    color: #e6e6e6;
+    padding: 15px 0px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+    margin-right: 15px;
+}
+
+button.selected {
+    border-bottom: 3px solid #e6e6e6;
 }

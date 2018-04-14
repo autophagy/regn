@@ -9,6 +9,7 @@
 
     <title>Regn</title>
 
+    <link rel="stylesheet" href="{{url_for('static', filename='css/reset.css')}}" />
     <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}" />
     <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment.min.js"></script>
@@ -79,8 +80,20 @@
             </div>
         </div>
 
-        <div id="graph">
-            <canvas id="canvas"></canvas>
+        <div id="graph-container">
+            <div id="graph">
+                <canvas id="canvas"></canvas>
+            </div>
+            <div id="graph-controls">
+                <button id="temperature-control" class="control">
+                </button>
+                <button id="pressure-control" class="control">
+                </button>
+                <button id="humidity-control" class="control">
+                </button>
+                <button id="luminosity-control" class="control">
+                </button>
+            </div>
         </div>
     </div>
 
