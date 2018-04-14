@@ -261,14 +261,19 @@ class Dashboard {
     }
 
     create_controls() {
-        for (var key in this.sensorTypes) {
-            var sensorType = this.sensorTypes[key]
-            var elm = document.getElementById(sensorType.apiTerm + "-control")
-            elm.innerHTML = sensorType.title;
-            elm.onclick = (function(apiTerm, self) {return function() {
-                self.switch_mode(apiTerm);
-            };})(sensorType.apiTerm, this);
-            if (this.mode == sensorType) {
+        this.create_control_group(this.mode, this.sensorTypes, this.switch_mode);
+        this.create_control_group(this.granularity, this.granularities, this.switch_granularity);
+    }
+
+    create_control_group(current_control, control_list, switch_function) {
+        for (var key in control_list) {
+            var control = control_list[key]
+            var elm = document.getElementById(control.apiTerm + "-control")
+            elm.innerHTML = control.title;
+            elm.onclick = (function(switch_function, apiTerm, self) {return function() {
+                switch_function.call(self, apiTerm);
+            };})(switch_function, control.apiTerm, this);
+            if (current_control == control) {
                 elm.classList.add('selected');
             } else {
                 elm.classList.remove('selected');

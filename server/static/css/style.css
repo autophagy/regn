@@ -35,6 +35,8 @@ body {
 
 #graph-controls {
     margin-top: 22px;
+    display: flex;
+    justify-content: space-between;
 }
 
 button:hover {
