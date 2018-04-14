@@ -1,3 +1,18 @@
+Chart.plugins.register({
+    afterDraw: function(chart) {
+    if (chart.data.datasets[0].data.length === 0) {
+      var ctx = chart.chart.ctx;
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = "16px Inconsolata, monospace";
+      ctx.fillStyle = '#e6e6e6';
+      ctx.fillText('NO DATA', chart.chart.width / 2, chart.chart.height / 2);
+      ctx.restore();
+    }
+  }
+});
+
 class Dashboard {
     constructor() {
         this.defaultSensorType = 'temperature'
