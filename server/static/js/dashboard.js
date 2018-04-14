@@ -120,7 +120,7 @@ class Dashboard {
                 var dat = JSON.parse(latest_request.responseText);
                 for (var key in self.latestReadingTypes) {
                     var readingType = self.latestReadingTypes[key]
-                    document.getElementById("latest-" + readingType.apiTerm).innerHTML = dat[readingType.apiTerm] + readingType.unit
+                    document.getElementById("latest-" + readingType.apiTerm).innerHTML = (dat[readingType.apiTerm] || "-- ") + readingType.unit
                     document.getElementById("latest-" + readingType.apiTerm + "-title").innerHTML = readingType.title
                 }
             }
