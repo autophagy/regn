@@ -6,7 +6,7 @@ from schema.sensor_insert import insert_sensor_schema
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc, asc
 from statistics import mean
-from functools import reduce
+from functools import reduce, wraps
 from math import ceil
 from config import config
 
@@ -47,6 +47,16 @@ VALID_SENSOR_TYPES = {
 COORDINATES = {"latitude": 52.489, "longitude": 13.354}
 
 
+def require_api_key(view_function):
+    @wraps(view_function)
+    def decorated_function(*args, **kwargs):
+        if request.headers.get('x-api-key') and request.headers.get('x-api-key') == application.config['API_KEY']:
+            return view_function(*args, **kwargs)
+        else:
+            abort(401)
+    return decorated_function
+
+
 @application.route("/")
 def index():
     return render_template("index.html")
@@ -58,6 +68,7 @@ def index():
 
 @application.route("/api/insert", methods=["POST"])
 @validate_schema(insert_sensor_schema)
+@require_api_key
 def insert():
     data = json.loads(request.data)
     timestamp = datetime.utcnow()

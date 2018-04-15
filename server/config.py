@@ -14,12 +14,12 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///test.db"
     SERVER_NAME = "0.0.0.0:42069"
-    API_TOKEN = "development-token"
+    API_KEY = "development-token"
 
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
-    API_TOKEN = os.environ.get("API_TOKEN")
+    API_KEY = os.environ.get("API_KEY")
 
 
 class HerokuConfig(ProductionConfig):
