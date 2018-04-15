@@ -1,5 +1,6 @@
-from app import create_app
+from app import create_app, db
 import os
 
-application = create_app(os.getenv("FLASK_CONFIG") or "default")
-application.run()
+app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+db.create_all()
+app.run()

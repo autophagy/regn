@@ -1,36 +1,15 @@
-from flask import Flask, request, jsonify, abort, json, render_template
+from flask import request, jsonify, abort, json, current_app
 from datetime import datetime, timedelta
 from calendar import timegm
-from schema import validate_schema
-from schema.sensor_insert import insert_sensor_schema
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc, asc
-from statistics import mean
 from functools import reduce, wraps
 from math import ceil
-from config import config
 
-application = Flask(__name__)
-db = SQLAlchemy()
-
-
-class SensorData(db.Model):
-    __tablename__ = "sensordata"
-    timestamp = db.Column(db.DateTime, primary_key=True)
-    temperature = db.Column(db.Float)
-    humidity = db.Column(db.Float)
-    pressure = db.Column(db.Float)
-    luminosity = db.Column(db.Integer)
-
-    def dict(self):
-        return {
-            "timestamp": timegm(self.timestamp.utctimetuple()) * 1000,
-            "temperature": self.temperature,
-            "humidity": self.humidity,
-            "pressure": self.pressure,
-            "luminosity": self.luminosity
-        }
-
+from . import main
+from .. import db
+from ..schema import validate_schema
+from ..schema.sensor_insert import insert_sensor_schema
+from ..models import SensorData
 
 VALID_DURATIONS = {
     "day": timedelta(days=1),
@@ -48,25 +27,27 @@ COORDINATES = {"latitude": 52.489, "longitude": 13.354}
 
 
 def require_api_key(view_function):
+
     @wraps(view_function)
     def decorated_function(*args, **kwargs):
-        if request.headers.get('x-api-key') and request.headers.get('x-api-key') == application.config['API_KEY']:
+        if request.headers.get("x-api-key") and request.headers.get(
+            "x-api-key"
+        ) == current_app.config[
+            "API_KEY"
+        ]:
             return view_function(*args, **kwargs)
+
         else:
             abort(401)
+
     return decorated_function
-
-
-@application.route("/")
-def index():
-    return render_template("index.html")
 
 
 # REST-ish Endpoints
 # Sensor Data Insertion
 
 
-@application.route("/api/insert", methods=["POST"])
+@main.route("/api/insert", methods=["POST"])
 @validate_schema(insert_sensor_schema)
 @require_api_key
 def insert():
@@ -79,6 +60,7 @@ def insert():
         pressure=data["pressure"],
         luminosity=data["luminosity"],
     )
+
     db.session.add(db_data)
     db.session.commit()
     return "", 201
@@ -89,7 +71,7 @@ def insert():
 # Latest Values
 
 
-@application.route("/api/latest", methods=["GET"])
+@main.route("/api/latest", methods=["GET"])
 def latest():
     latest_results = COORDINATES
     latest = db.session.query(SensorData).order_by(desc("timestamp")).first()
@@ -101,10 +83,8 @@ def latest():
 # Specific Sensor Types
 
 
-@application.route("/api/<string:sensor>/<string:duration>", methods=["GET"])
-@application.route(
-    "/api/<string:sensor>/<string:duration>/<int:datapoints>", methods=["GET"]
-)
+@main.route("/api/<string:sensor>/<string:duration>", methods=["GET"])
+@main.route("/api/<string:sensor>/<string:duration>/<int:datapoints>", methods=["GET"])
 def sensorReadings(sensor, duration, datapoints=None):
     if sensor not in VALID_SENSOR_TYPES or duration not in VALID_DURATIONS:
         abort(404)
@@ -146,9 +126,7 @@ def sensorReadings(sensor, duration, datapoints=None):
     return jsonify(values)
 
 
-@application.route(
-    "/api/<string:sensor>/<string:duration>/since/<int:ts>", methods=["GET"]
-)
+@main.route("/api/<string:sensor>/<string:duration>/since/<int:ts>", methods=["GET"])
 def sensorReadingsSinceTimestamp(sensor, duration, ts):
     if sensor not in VALID_SENSOR_TYPES or duration not in VALID_DURATIONS:
         abort(404)
@@ -165,13 +143,3 @@ def sensorReadingsSinceTimestamp(sensor, duration, ts):
         )
     )
     return jsonify(values)
-
-
-def create_app(configName):
-    application.config.from_object(config[configName])
-    config[configName].init_app(application)
-    db.init_app(application)
-    db.app = application
-    db.create_all()
-    db.session.commit()
-    return application
