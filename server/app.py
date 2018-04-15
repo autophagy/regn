@@ -1,18 +1,17 @@
 from flask import Flask, request, jsonify, abort, json, render_template
 from datetime import datetime, timedelta
 from calendar import timegm
-from .schema import validate_schema
-from .schema.sensor_insert import insert_sensor_schema
+from schema import validate_schema
+from schema.sensor_insert import insert_sensor_schema
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc, asc
 from statistics import mean
 from functools import reduce
 from math import ceil
-
+from config import config
 
 application = Flask(__name__)
-application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
-db = SQLAlchemy(application)
+db = SQLAlchemy()
 
 
 class SensorData(db.Model):
@@ -32,9 +31,6 @@ class SensorData(db.Model):
             "luminosity": self.luminosity
         }
 
-
-db.create_all()
-db.session.commit()
 
 VALID_DURATIONS = {
     "day": timedelta(days=1),
@@ -93,15 +89,20 @@ def latest():
 
 # Specific Sensor Types
 
+
 @application.route("/api/<string:sensor>/<string:duration>", methods=["GET"])
-@application.route("/api/<string:sensor>/<string:duration>/<int:datapoints>", methods=["GET"])
+@application.route(
+    "/api/<string:sensor>/<string:duration>/<int:datapoints>", methods=["GET"]
+)
 def sensorReadings(sensor, duration, datapoints=None):
     if sensor not in VALID_SENSOR_TYPES or duration not in VALID_DURATIONS:
         abort(404)
     now = datetime.utcnow()
     values = db.session.query(getattr(SensorData, sensor), SensorData.timestamp).filter(
         SensorData.timestamp >= now - VALID_DURATIONS[duration]
-    ).order_by(asc("timestamp")).all()
+    ).order_by(
+        asc("timestamp")
+    ).all()
     # Average the result set by the amount of required datapoints
     values = list(
         map(
@@ -114,23 +115,38 @@ def sensorReadings(sensor, duration, datapoints=None):
         chunk_size = ceil(len(values) / datapoints)
         reduced_data = []
         for i in range(0, datapoints):
-            chunk = values[i*chunk_size:(i+1)*chunk_size]
+            chunk = values[i * chunk_size:(i + 1) * chunk_size]
             if len(chunk) > 0:
-                summed = reduce(lambda x, y: {"timestamp": x["timestamp"] + y["timestamp"],
-                                              "value": x["value"] + y["value"]}, chunk)
-                reduced_data.append({"timestamp": summed["timestamp"] / len(chunk),
-                                    "value": summed["value"] / len(chunk)})
+                summed = reduce(
+                    lambda x,
+                    y: {
+                        "timestamp": x["timestamp"] + y["timestamp"],
+                        "value": x["value"] + y["value"],
+                    },
+                    chunk,
+                )
+                reduced_data.append(
+                    {
+                        "timestamp": summed["timestamp"] / len(chunk),
+                        "value": summed["value"] / len(chunk),
+                    }
+                )
         values = reduced_data
     return jsonify(values)
 
-@application.route("/api/<string:sensor>/<string:duration>/since/<int:ts>", methods=["GET"])
+
+@application.route(
+    "/api/<string:sensor>/<string:duration>/since/<int:ts>", methods=["GET"]
+)
 def sensorReadingsSinceTimestamp(sensor, duration, ts):
     if sensor not in VALID_SENSOR_TYPES or duration not in VALID_DURATIONS:
         abort(404)
     dt = datetime.utcfromtimestamp(ts / 1000)
     values = db.session.query(getattr(SensorData, sensor), SensorData.timestamp).filter(
         SensorData.timestamp > dt
-    ).order_by(asc("timestamp")).all()
+    ).order_by(
+        asc("timestamp")
+    ).all()
     values = list(
         map(
             lambda x: {"timestamp": timegm(x[1].utctimetuple()) * 1000, "value": x[0]},
@@ -140,5 +156,11 @@ def sensorReadingsSinceTimestamp(sensor, duration, ts):
     return jsonify(values)
 
 
-if __name__ == "__main__":
-    application.run(host="0.0.0.0", port=80)
+def create_app(configName):
+    application.config.from_object(config[configName])
+    config[configName].init_app(application)
+    db.init_app(application)
+    db.app = application
+    db.create_all()
+    db.session.commit()
+    return application
