@@ -1,13 +1,19 @@
+html, body {
+    max-height: 100%;
+    overflow-y: hidden;
+    height: 100%;
+}
+
 body {
     background-color: #1F1F1F;
     color: #e6e6e6;
     font-family: 'Inconsolata', monospace;
-    padding: 45px;
 }
 
 #container {
     display: flex;
     justify-content: space-between;
+    padding: 45px;
 }
 
 #sidebar {
