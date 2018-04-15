@@ -19,7 +19,10 @@ while True:
                 "humidity": round(100 * t3, 1),
                 "luminosity": floor(500 * t4)}
         print(data)
-        requests.post("http://localhost:42069/api/insert", json=data)
+        requests.post("http://0.0.0.0:42069/api/insert",
+                      json=data,
+                      headers={"x-api-key": "development-token"})
         s += step
+        sleep(1)
     step = step * -1
     s += step
