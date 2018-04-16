@@ -135,7 +135,11 @@ class Dashboard {
                 var dat = JSON.parse(latest_request.responseText);
                 for (var key in self.latestReadingTypes) {
                     var readingType = self.latestReadingTypes[key]
-                    document.getElementById("latest-" + readingType.apiTerm).innerHTML = (dat[readingType.apiTerm] || "-- ") + readingType.unit
+                    var value = "-- ";
+                    if (dat.hasOwnProperty(readingType.apiTerm)) {
+                        value = dat[readingType.apiTerm];
+                    }
+                    document.getElementById("latest-" + readingType.apiTerm).innerHTML = value + readingType.unit
                     document.getElementById("latest-" + readingType.apiTerm + "-title").innerHTML = readingType.title
                 }
             }
