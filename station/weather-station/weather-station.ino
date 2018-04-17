@@ -1,14 +1,14 @@
 /*
-  Regn :: Arduino Weather Station
+  Regn :: Weather Station
 
   @version    0.1.0
   @author     Mika Naylor [Autophagy] :: http://autophagy.io/
   @hardware   Mika Naylor [Autophagy] :: http://autophagy.io/
 
   @description
-  An arduino client that reads temp, humidity, atmospheric pressure and
-  luminosity at 3 second intervals. Takes 20 readings per interval and averages
-  them in order to minimise anomalous readings.
+  A client that reads temp, humidity, atmospheric pressure and
+  luminosity at 10 minute intervals. POSTs these readings at a
+  predefined endpoint, running the Regn server.
 
   Implementation Details :: https://github.com/Autophagy/regn
 */
@@ -32,14 +32,16 @@ Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
 // Connectivity
 const char* ssid = "ssid";
 const char* password = "password";
-const char* host = "host";
-const char* endpoint = "/api";
+
+const char* host = "https://regn-weather.herokuapp.com/api/insert";
+const char* fingerprint = "08 3B 71 72 02 43 6E CA ED 42 86 93 BA 7E DF 81 C4 BC 62 30";
+const char* api_key = "apikey";
 
 
 // Variables
 bool DEBUG = true; // Set to true to output sensor information to the Serial port.
 
-long sensor_interval = 10000; // 10 seconds
+long sensor_interval = 600000; // 10 minutes
 float temperature;
 float humidity;
 float pressure;
@@ -105,19 +107,25 @@ void loop() {
     Serial.println(JSONmessageBuffer);
   }
 
+  int code = -1;
   HTTPClient http;
-  http.begin(host, endpoint);
-  http.addHeader("Content-Type", "application/json");
-  int code = http.POST(JSONmessageBuffer);
+  while(code != 201) {
+    http.begin(host, fingerprint);
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("x-api-key", api_key);
+    code = http.POST(JSONmessageBuffer);
 
-  if (DEBUG) {
-    Serial.println(code);
-    Serial.println(http.getString());
+    if (DEBUG) {
+      Serial.println(code);
+      Serial.println(http.getString());
+    }
+
+    http.end();
+    delay(1000);
   }
 
-  http.end();
-
   // Delay by sensor_interval for each read
+
   delay(sensor_interval);
 }
 
