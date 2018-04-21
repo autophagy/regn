@@ -12,12 +12,25 @@ Hardware
 - `BMP180 barometric pressure sensor`_
 - `TSL2561 luminosity/lux/light sensor`_
 
-Schematics
-----------
+Schematic
+---------
 
-.. image:: station/weather-station_bb.png
+.. image:: seonu/_static/schema.png
 
-.. image:: station/weather-station_schem.png
+PCB
+---
+
+.. image:: seonu/_static/board.png
+
+Front
+~~~~~
+
+.. image:: seonu/_static/pcb_front.png
+
+Back
+~~~~
+
+.. image:: seonu/_static/pcb_back.png
 
 Software
 ========
