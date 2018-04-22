@@ -244,8 +244,7 @@
 <pad name="SCL" x="0" y="0" drill="1.016" shape="long" rot="R90"/>
 <pad name="GND" x="2.54" y="0" drill="1.016" shape="long" rot="R90"/>
 <pad name="VCC" x="5.08" y="0" drill="1.016" shape="long" rot="R90"/>
-<text x="-6.4262" y="1.8288" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<text x="-6.35" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
+<text x="10.16" y="-0.635" size="1.27" layer="27">&gt;VALUE</text>
 <rectangle x1="2.286" y1="-0.254" x2="2.794" y2="0.254" layer="51"/>
 <rectangle x1="-0.254" y1="-0.254" x2="0.254" y2="0.254" layer="51"/>
 <rectangle x1="-2.794" y1="-0.254" x2="-2.286" y2="0.254" layer="51"/>
@@ -361,6 +360,7 @@
 <wire x1="6.35" y1="11.43" x2="7.62" y2="11.43" width="0.254" layer="22"/>
 <wire x1="-6.35" y1="12.7" x2="-6.35" y2="11.43" width="0.254" layer="22"/>
 <wire x1="-6.35" y1="11.43" x2="-7.62" y2="11.43" width="0.254" layer="22"/>
+<text x="8.89" y="-5.08" size="1.27" layer="25" align="bottom-right">&gt;NAME</text>
 </package>
 <package name="ESP8266HUZZAH">
 <description>&lt;b&gt;ESP8266 Huzzah&lt;/b&gt;</description>
@@ -1008,6 +1008,8 @@
 <wire x1="21.59" y1="16.51" x2="19.05" y2="13.97" width="0.254" layer="22"/>
 <wire x1="19.05" y1="13.97" x2="21.59" y2="13.97" width="0.254" layer="22"/>
 <wire x1="21.59" y1="13.97" x2="19.05" y2="16.51" width="0.254" layer="22"/>
+<text x="-2.54" y="19.05" size="1.27" layer="25">&gt;NAME</text>
+<text x="-2.54" y="-22.86" size="1.27" layer="27">&gt;VALUE</text>
 </package>
 <package name="TSL2561" urn="urn:adsk.eagle:footprint:22367/1" locally_modified="yes">
 <description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
@@ -1068,8 +1070,8 @@
 <pad name="INT" x="2.54" y="0" drill="1.016" shape="long" rot="R90"/>
 <pad name="SDA" x="5.08" y="0" drill="1.016" shape="long" rot="R90"/>
 <pad name="SCL" x="7.62" y="0" drill="1.016" shape="long" rot="R90"/>
-<text x="-10.2362" y="3.0988" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<text x="-10.16" y="-5.715" size="1.27" layer="27">&gt;VALUE</text>
+<text x="-9.6012" y="2.4638" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="-9.525" y="-5.08" size="1.27" layer="27">&gt;VALUE</text>
 <rectangle x1="4.826" y1="-0.254" x2="5.334" y2="0.254" layer="51"/>
 <rectangle x1="2.286" y1="-0.254" x2="2.794" y2="0.254" layer="51"/>
 <rectangle x1="-0.254" y1="-0.254" x2="0.254" y2="0.254" layer="51"/>
@@ -1082,16 +1084,16 @@
 <text x="0" y="-2.54" size="0.6096" layer="21" font="fixed">ADDR</text>
 <text x="-5.08" y="-2.54" size="0.6096" layer="21" font="fixed">GND</text>
 <text x="-7.62" y="-2.54" size="0.6096" layer="21" font="fixed">VIN</text>
-<wire x1="-10.16" y1="-3.81" x2="10.16" y2="-3.81" width="0.127" layer="51"/>
-<wire x1="-10.16" y1="-3.81" x2="10.16" y2="-3.81" width="0.127" layer="21"/>
-<wire x1="-10.16" y1="-3.81" x2="-10.16" y2="2.54" width="0.127" layer="51"/>
-<wire x1="-10.16" y1="2.54" x2="8.89" y2="2.54" width="0.127" layer="51"/>
-<wire x1="8.89" y1="2.54" x2="10.16" y2="1.27" width="0.127" layer="51"/>
-<wire x1="10.16" y1="1.27" x2="10.16" y2="-3.81" width="0.127" layer="51"/>
-<wire x1="-10.16" y1="-3.81" x2="-10.16" y2="2.54" width="0.127" layer="21"/>
-<wire x1="-10.16" y1="2.54" x2="8.89" y2="2.54" width="0.127" layer="21"/>
-<wire x1="8.89" y1="2.54" x2="10.16" y2="1.27" width="0.127" layer="21"/>
-<wire x1="10.16" y1="1.27" x2="10.16" y2="-3.81" width="0.127" layer="21"/>
+<wire x1="-9.525" y1="-3.175" x2="9.525" y2="-3.175" width="0.127" layer="51"/>
+<wire x1="-9.525" y1="-3.175" x2="9.525" y2="-3.175" width="0.127" layer="21"/>
+<wire x1="9.525" y1="1.27" x2="9.525" y2="-3.175" width="0.127" layer="51"/>
+<wire x1="9.525" y1="1.27" x2="9.525" y2="-3.175" width="0.127" layer="21"/>
+<wire x1="-9.525" y1="-3.175" x2="-9.525" y2="1.905" width="0.127" layer="51"/>
+<wire x1="-9.525" y1="1.905" x2="8.89" y2="1.905" width="0.127" layer="51"/>
+<wire x1="8.89" y1="1.905" x2="9.525" y2="1.27" width="0.127" layer="51"/>
+<wire x1="-9.525" y1="-3.175" x2="-9.525" y2="1.905" width="0.127" layer="21"/>
+<wire x1="-9.525" y1="1.905" x2="8.89" y2="1.905" width="0.127" layer="21"/>
+<wire x1="8.89" y1="1.905" x2="9.525" y2="1.27" width="0.127" layer="21"/>
 </package>
 </packages>
 <packages3d>
@@ -1193,7 +1195,7 @@
 </device>
 </devices>
 </deviceset>
-<deviceset name="ESP8266HUZZAH">
+<deviceset name="ESP8266HUZZAH" uservalue="yes">
 <description>&lt;b&gt;Adafruit ESP8226 Huzzah&lt;/b&gt;
 &lt;p&gt;80 MHz microcontroller with WiFi front-end, with TCP/IP stack and DNS support. Contains onboard 500mA 3.3V regulator.&lt;/p&gt;</description>
 <gates>
@@ -1929,7 +1931,7 @@ JST PH 2-pin thru-home side entry</description>
 <parts>
 <part name="FRAME1" library="frames" library_urn="urn:adsk.eagle:library:229" deviceset="FRAME_A_L" device=""/>
 <part name="BMP180" library="regn" deviceset="BMP180" device="" package3d_urn="urn:adsk.eagle:package:22469/2"/>
-<part name="ESP8226" library="regn" deviceset="ESP8266HUZZAH" device="" value="ESP8266HUZZAH"/>
+<part name="ESP8226" library="regn" deviceset="ESP8266HUZZAH" device=""/>
 <part name="TSL2561" library="regn" deviceset="TSL2561" device="" package3d_urn="urn:adsk.eagle:package:22477/2"/>
 <part name="DHT22" library="RHT03_DHT-22_AM2302" deviceset="RHT03_DHT-22_AM2302" device="WIRED"/>
 <part name="GND1" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
