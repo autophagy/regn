@@ -9345,6 +9345,19 @@ JST PH 2-pin thru-home side entry</description>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="104,1,58.42,-15.24,BMP180,3.3,3.3V,,,"/>
+<approved hash="204,1,38.1,-15.24,BMP180,VCC,,,,"/>
+<approved hash="104,1,-20.32,-17.78,ESP8226,VBAT,N$6,,,"/>
+<approved hash="204,1,-20.32,-12.7,ESP8226,V+,,,,"/>
+<approved hash="104,1,38.1,20.32,TSL2561,VIN,3.3V,,,"/>
+<approved hash="104,1,-40.64,5.08,DHT22,VDD,N$2,,,"/>
+<approved hash="113,1,4.976,11.326,FRAME1,,,,,"/>
+<approved hash="113,1,48.4928,-25.7912,BMP180,,,,,"/>
+<approved hash="113,1,0,2.77283,ESP8226,,,,,"/>
+<approved hash="113,1,53.1072,32.1412,TSL2561,,,,,"/>
+<approved hash="113,1,-46.1645,11.2141,DHT22,,,,,"/>
+</errors>
 </schematic>
 </drawing>
 <compatibility>
