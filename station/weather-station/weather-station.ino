@@ -23,7 +23,7 @@
 #include <ArduinoJson.h>
 
 // Constants
-#define DHTPIN 12 // DHT22 connected to pin 12
+#define DHTPIN 14 // DHT22 connected to pin 14
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_LOW, 12345);
@@ -48,6 +48,9 @@ float pressure;
 float lux;
 
 void setup() {
+
+  pinMode(12, OUTPUT);
+  digitalWrite(12, HIGH);
 
   if (DEBUG) {
     Serial.begin(115200);
